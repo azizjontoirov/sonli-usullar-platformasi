@@ -1,5 +1,6 @@
-# ER Diagramma (Entity-Relationship)
+# ER Diagramma
 ## Sonli Usullar Platformasi
+**Talaba:** Toirov Azizjon | **Guruh:** DI 23-14
 
 ---
 
@@ -13,7 +14,7 @@
 | email | VARCHAR(100) UK | Email |
 | password_hash | VARCHAR(255) | Bcrypt hash |
 | full_name | VARCHAR(100) | To'liq ism |
-| role | VARCHAR(20) | admin/student/teacher |
+| role | VARCHAR(20) | student |
 | is_active | BOOLEAN | Faol/Bloklangan |
 | created_at | TIMESTAMP | Ro'yxatdan o'tish vaqti |
 
@@ -28,7 +29,7 @@
 | steps | JSONB | Bosqichlar |
 | created_at | TIMESTAMP | Hisoblash vaqti |
 
-### projects (Loyihalar - investitsiya)
+### projects (Loyihalar - investitsiya uchun)
 | Atribut | Turi | Tavsif |
 |---------|------|--------|
 | id | SERIAL PK | Unikal ID |
@@ -42,8 +43,8 @@
 |---------|------|--------|
 | id | SERIAL PK | Unikal ID |
 | project_id | INTEGER FK | Qaysi loyihaga |
-| investment_amount | INTEGER | Sarmoya |
-| revenue | INTEGER | Foyda |
+| investment_amount | INTEGER | Sarmoya miqdori |
+| revenue | INTEGER | Kutilayotgan foyda |
 
 ### transport_problems (Transport masalalari)
 | Atribut | Turi | Tavsif |
@@ -61,31 +62,21 @@
 
 ---
 
-## 2. Aloqalar (Relationships)
+## 2. Jadvallar orasidagi aloqalar
 
-```
-users ||--o{ calculations : "1 -> ko'p"
-users ||--o{ projects : "1 -> ko'p"
-users ||--o{ transport_problems : "1 -> ko'p"
-projects ||--o{ project_revenues : "1 -> ko'p"
-```
-
-### Tavsif:
-- **Bitta foydalanuvchi** -> **Ko'p hisoblashlar** (1:N)
-- **Bitta foydalanuvchi** -> **Ko'p loyihalar** (1:N)
-- **Bitta foydalanuvchi** -> **Ko'p transport masalalari** (1:N)
-- **Bitta loyiha** -> **Ko'p daromad qatorlari** (1:N)
+- **Bitta foydalanuvchi** ko'p hisoblashlar qilishi mumkin (1:N)
+- **Bitta foydalanuvchi** ko'p loyihalar yarata oladi (1:N)
+- **Bitta foydalanuvchi** ko'p transport masalalarini saqlaydi (1:N)
+- **Bitta loyiha** ko'p daromad qatorlariga ega (1:N)
 
 ---
 
-## 3. ER Diagramma (tekstual ko'rinish)
-
-```
+## 3. ER Diagramma
 +----------------+         +-------------------+
 |     users      |         |   calculations    |
 +----------------+         +-------------------+
-| PK id          |<------->| PK id             |
-| username       |    1:N  | FK user_id        |
+| PK id          |-------->| PK id             |
+| username       |   1:N   | FK user_id        |
 | email          |         | method_name       |
 | password_hash  |         | input_data (JSON) |
 | full_name      |         | result_data (JSON)|
@@ -93,41 +84,38 @@ projects ||--o{ project_revenues : "1 -> ko'p"
 | is_active      |         | created_at        |
 | created_at     |         +-------------------+
 +----------------+
-         | 1:N
-         |
-         v
-+----------------+         +-------------------+
-|    projects    |         | project_revenues  |
-+----------------+         +-------------------+
-| PK id          |<------->| PK id             |
-| FK user_id     |    1:N  | FK project_id     |
-| name           |         | investment_amount |
-| budget         |         | revenue           |
-| created_at     |         +-------------------+
+|
+| 1:N
+|
+v
++----------------+         +--------------------+
+|    projects    |         | project_revenues   |
++----------------+         +--------------------+
+| PK id          |-------->| PK id              |
+| FK user_id     |   1:N   | FK project_id      |
+| name           |         | investment_amount  |
+| budget         |         | revenue            |
+| created_at     |         +--------------------+
 +----------------+
-         | 1:N
-         v
-+-------------------+
-| transport_problems|
-+-------------------+
-| PK id             |
-| FK user_id        |
-| name              |
-| supply (array)    |
-| demand (array)    |
-| costs (matrix)    |
-| method            |
-| solution (JSON)   |
-| total_cost        |
-| created_at        |
-+-------------------+
-```
++---------------------+
+| transport_problems  |
++---------------------+
+| PK id               |
+| FK user_id          |
+| name                |
+| supply (array)      |
+| demand (array)      |
+| costs (matrix)      |
+| method              |
+| solution (JSON)     |
+| total_cost          |
+| created_at          |
++---------------------+
 
 ---
 
-## 4. Cheklovlar (Constraints)
+## 4. Cheklovlar
 
-1. **CASCADE DELETE**: Foydalanuvchi o'chirilganda uning barcha hisoblashlari, loyihalari va transport masalalari avtomatik o'chiriladi.
-2. **UNIQUE**: username va email takrorlanmas.
-3. **CHECK**: budget >= 0, investment_amount >= 0.
-4. **NOT NULL**: Asosiy maydonlar (username, email, password_hash) bo'sh bo'lishi mumkin emas.
+1. **CASCADE DELETE**: Foydalanuvchi o'chirilganda uning barcha ma'lumotlari ham o'chadi.
+2. **UNIQUE**: username va email takrorlanmas bo'lishi kerak.
+3. **NOT NULL**: username, email, password_hash bo'sh bo'lishi mumkin emas.
