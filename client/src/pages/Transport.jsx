@@ -141,7 +141,7 @@ export default function Transport() {
                 className="input-field bg-white"
               >
                 <option value="northwest">Shimoli-g'arbiy burchak</option>
-                <option value="leastcost">Minimal xarajat usuli</option>
+                <option value="leastcost">Minimal xarajat usuli (Potensiallar)</option>
                 <option value="vogel">Vogel aproksimatsiyasi</option>
               </select>
             </div>
@@ -236,16 +236,40 @@ export default function Transport() {
                         {i + 1}
                       </div>
                       <div>
-                        <p className="text-sm text-slate-800">
-                          <strong>Manba {q.i + 1}</strong> dan <strong>Mijoz {q.j + 1}</strong> ga{" "}
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">
-                            {q.miqdor} ta
-                          </span>{" "}
-                          mahsulot yuborildi.
-                        </p>
-                        <p className="text-xs text-slate-500 mt-1">Xarajat: {q.xarajat} birlik/dona</p>
-                        {q.jarima !== undefined && (
-                          <p className="text-xs text-orange-500 mt-0.5">Jarima: {q.jarima}</p>
+                        {q.tavsif ? (
+                          /* Potensiallar usuli */
+                          <>
+                            <p className="text-sm text-slate-800 font-medium">{q.tavsif}</p>
+                            {q.kirish && (
+                              <p className="text-sm text-slate-700 mt-1">
+                                <strong>Manba {q.kirish.i + 1}</strong> dan{" "}
+                                <strong>Mijoz {q.kirish.j + 1}</strong> ga{" "}
+                                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">
+                                  {q.theta} ta
+                                </span>{" "}
+                                mahsulot kiritildi.
+                              </p>
+                            )}
+                            <p className="text-xs text-slate-500 mt-1">Xarajat: {q.xarajat} birlik</p>
+                            {q.minDelta !== undefined && (
+                              <p className="text-xs text-orange-500 mt-0.5">Δ = {q.minDelta?.toFixed(2)}</p>
+                            )}
+                          </>
+                        ) : (
+                          /* Shimoli-g'arbiy va Vogel usuli */
+                          <>
+                            <p className="text-sm text-slate-800">
+                              <strong>Manba {q.i + 1}</strong> dan <strong>Mijoz {q.j + 1}</strong> ga{" "}
+                              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">
+                                {q.miqdor} ta
+                              </span>{" "}
+                              mahsulot yuborildi.
+                            </p>
+                            <p className="text-xs text-slate-500 mt-1">Xarajat: {q.xarajat} birlik/dona</p>
+                            {q.jarima !== undefined && (
+                              <p className="text-xs text-orange-500 mt-0.5">Jarima: {q.jarima}</p>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
